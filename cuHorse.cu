@@ -23,6 +23,11 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ********************************************/
+/*
+This work is to reproduce the results of https://arxiv.org/pdf/1608.04329.pdf of Alexander Terenin, Shawfeng Dong, David Draper
+and to explore the technology.  
+*/
+
 
 /* Basic API header files qsub -I -lselect=1:ncpus=1:mem=1gb:ngpus=1
 nvcc -O3 -arch=sm_35 -G -lcublas -lcurand -lcusolver --shared -Xcompiler -fPIC -o cuHorse.so cuHorse.cu
@@ -259,7 +264,7 @@ void gibbs_sampler(int *n_in, int *p_in, double *X, int *Y, double *store, int *
   cublasSetVectorAsync(1, sizeof(double), &one, 1, d_one, 1, stream2);
   cublasSetVectorAsync(1, sizeof(double), &zero, 1, d_zero, 1, stream1);
   init <<<n/32, 32 >>>(time(0), d_states);
-  /*Step i: Prevompute X^TX before starting the algorithm*/
+  /*Step i: Precompute X^TX before starting the algorithm*/
   cublasSetPointerMode(handle, CUBLAS_POINTER_MODE_DEVICE);
   cublasDgemm(handle, CUBLAS_OP_T, CUBLAS_OP_N, p, p, n, d_one, d_X, n, d_X, n, d_zero, d_XTX, p);
 
